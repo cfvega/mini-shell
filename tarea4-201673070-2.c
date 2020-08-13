@@ -32,23 +32,22 @@ void executeCommand( int background ){
   char buffer[100]="";
 
   pid = fork();
-  // printf("%s",); 
   if( strchr(comando,'.') == NULL ) {char buffer[100]="/bin";} else {char buffer[100]="";}
-  // printf("%d", pid);
   strcat(buffer,comando);
+
   if( pid == 0 ) {
-    execv(buffer,args);
-    // wait(getppid());
-    // if( !execvp(buffer,args) ){
-    //   exit(1);
-    // }
-  // getcwd(PWD,maxln_Com_Amb);
-
+    wait(getppid());
+    if( !execv(buffer,args) ){
+      exit(1);
+    }
+    getcwd(PWD,maxln_Com_Amb);
   } else {
-    wait(NULL);
+    if( background ) {
+      printf("[PID] %d\n",pid);
+    } else {
+      wait(NULL);
+    }
   }
-
-
 }
 
 
@@ -70,11 +69,11 @@ int main(void){
     scanf(" %[^\n]s",comando);
 
     if( strlen(comando) > 0 ){
-      int params = parseCommand();
+      int paramsLen = parseCommand();
       if(strcmp(comando, "quit") == 0) {
         ready = 0;
       } else {
-      if (strcmp(args[params - 1], "&") == 0) executeCommand(1); else executeCommand(0);
+      if (strcmp(args[paramsLen - 1], "&") == 0) executeCommand(1); else executeCommand(0);
         
       }
     }
