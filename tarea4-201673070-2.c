@@ -15,45 +15,58 @@ char *args[max_args];
 char PWD[maxln_Com_Amb];
 char PATH[maxln_Com_Amb];
 char USER[maxln_Com_Amb];
-char *const envParms[2] = {"STEPLIB=SASC.V6.LINKLIB", NULL};
 
 
-int parseCommand(){
+int parseCommand() {
   int i;
-  for(i=0;i<(max_args-1);i++) args[i]=NULL;
-  strtok(comando," "), i=0;
-  args[i]=comando;
-  while((args[++i]=strtok(NULL," "))!=NULL && i<(max_args-2));
+  for(i = 0; i < (max_args - 1); i++) args[i] = NULL;
+  strtok(comando," "), i = 0;
+  args[i] = comando;
+  while((args[++i] = strtok(NULL," ")) != NULL && i < (max_args - 2));
   return i;
 }
 
-void executeCommand( int background ){
+int checkPath() {
+  int ok = 0;
+  for(int i = 0; i<strlen(comando) ;i++) {
+    char *r_position_ptr = strrchr("^/", comando[i]);
+    if(r_position_ptr != NULL) {
+      ok = 1;
+      break;
+    }
+  }
+  return ok;
+}
+
+void executeCommand( int background ) {
   int pid = 0;
   char buffer[100]="";
-
   pid = fork();
-  if( strchr(comando,'.') == NULL ) {char buffer[100]="/bin";} else {char buffer[100]="";}
+
+  if( checkPath() == 0 ) {
+    strcat(buffer,"/bin/");
+  }
   strcat(buffer,comando);
 
   if( pid == 0 ) {
-    wait(getppid());
-    if( !execv(buffer,args) ){
+    if( execv(buffer,args) == -1 ){
+      printf("%s: command not found. plz Wake Up!\n", comando);
       exit(1);
     }
-    getcwd(PWD,maxln_Com_Amb);
+    // getcwd(PWD,maxln_Com_Amb);
   } else {
     if( background ) {
       printf("[PID] %d\n",pid);
     } else {
       wait(NULL);
+      printf("\n");
     }
   }
 }
 
 
-int main(void){
+int main(void) {
   int ready=1;
-
 
   strcpy(PATH,getenv("PATH"));
   getcwd(PWD,maxln_Com_Amb);
@@ -63,13 +76,18 @@ int main(void){
   strcpy(USER,pw->pw_name);
   
   do {
-    printf(" %s: %s> ", USER, PWD);
+    printf("\033[0;31m");
+    printf("%s", USER);
+    printf("\033[0;36m");
+    printf(": %s> ", PWD);
+    printf("\033[0m");
     fflush(stdin);
     memset(comando,'\0',maxln_Com_Amb);
     scanf(" %[^\n]s",comando);
 
     if( strlen(comando) > 0 ){
       int paramsLen = parseCommand();
+
       if(strcmp(comando, "quit") == 0) {
         ready = 0;
       } else {
@@ -77,7 +95,6 @@ int main(void){
         
       }
     }
-
 
   } while (ready);
   return 0;
