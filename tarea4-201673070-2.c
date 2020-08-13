@@ -1,73 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-
-#include <unistd.h>
-#include <string.h>
-
-#include <pwd.h>
-
-#define maxln_Com_Amb 105
-#define max_args 10
-
-char comando[maxln_Com_Amb];
-char *args[max_args];
-
-char PWD[maxln_Com_Amb];
-char PATH[maxln_Com_Amb];
-char USER[maxln_Com_Amb];
-
-
-int parseCommand() {
-  int i;
-  char *token = strtok(comando, " ");
-  for(i = 0; i < (max_args - 1); i++) args[i] = NULL;
-  
-  i=0;
-  while(token != NULL && i < (max_args - 2)) {
-    args[i] = token;
-    i++;
-    token = strtok(NULL, " ");
-  }
-  return i;
-}
-
-int checkPath() {
-  int ok = 1;
-  for(int i = 0; i<strlen(comando) ;i++) {
-    char *r_position_ptr = strrchr("^/", comando[i]);
-    if(r_position_ptr != NULL) {
-      ok = 0;
-      break;
-    }
-  }
-  return ok;
-}
-
-void executeCommand( int background ) {
-  int pid = 0;
-  char buffer[100]="";
-  pid = fork();
-
-  if( checkPath() ) {
-    strcat(buffer,"/bin/");
-  }
-  strcat(buffer,comando);
-
-  if( pid == 0 ) {
-    if( execv(buffer,args) == -1 ){
-      printf("%s: command not found. plz Wake Up!\n", comando);
-      exit(1);
-    }
-    // getcwd(PWD,maxln_Com_Amb);
-  } else {
-    if( background ) {
-      printf("[PID] %d\n",pid);
-    } else {
-      wait(NULL);
-    }
-  }
-}
-
+#include "functions.h"
 
 int main(void) {
   int ready=1;
@@ -96,7 +27,11 @@ int main(void) {
 
       if(strcmp(comando, "quit") == 0 || strcmp(comando, "exit") == 0 || strcmp(comando, "logout") == 0 || strcmp(comando, "!q") == 0) {
         ready = 0;
-      } else {
+      } else if( strcmp(comando, "help") == 0 || strcmp(comando, "!h") == 0 ) {
+        showHelp();
+      } else if( strcmp(comando, "credits") == 0 || strcmp(comando, "!c") == 0 ) {
+        showCredits();
+      } else{
         if (strcmp(args[paramsLen - 1], "&") == 0) executeCommand(1); else executeCommand(0);
       }
     }
