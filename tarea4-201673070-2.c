@@ -19,19 +19,24 @@ char USER[maxln_Com_Amb];
 
 int parseCommand() {
   int i;
+  char *token = strtok(comando, " ");
   for(i = 0; i < (max_args - 1); i++) args[i] = NULL;
-  strtok(comando," "), i = 0;
-  args[i] = comando;
-  while((args[++i] = strtok(NULL," ")) != NULL && i < (max_args - 2));
+  
+  i=0;
+  while(token != NULL && i < (max_args - 2)) {
+    args[i] = token;
+    i++;
+    token = strtok(NULL, " ");
+  }
   return i;
 }
 
 int checkPath() {
-  int ok = 0;
+  int ok = 1;
   for(int i = 0; i<strlen(comando) ;i++) {
     char *r_position_ptr = strrchr("^/", comando[i]);
     if(r_position_ptr != NULL) {
-      ok = 1;
+      ok = 0;
       break;
     }
   }
@@ -43,7 +48,7 @@ void executeCommand( int background ) {
   char buffer[100]="";
   pid = fork();
 
-  if( checkPath() == 0 ) {
+  if( checkPath() ) {
     strcat(buffer,"/bin/");
   }
   strcat(buffer,comando);
@@ -59,7 +64,6 @@ void executeCommand( int background ) {
       printf("[PID] %d\n",pid);
     } else {
       wait(NULL);
-      printf("\n");
     }
   }
 }
@@ -74,13 +78,15 @@ int main(void) {
   uid_t uid = geteuid();
   struct passwd *pw = getpwuid(uid);
   strcpy(USER,pw->pw_name);
+  printf("Mini-Shell INF246 2020-1\n");
+  printf("(c) Claudio Vega Lagos. Tarea 2\n\n");
   
   do {
-    printf("\033[0;31m");
+    printf("\033[1;32m");
     printf("%s", USER);
-    printf("\033[0;36m");
+    printf("\033[0;33m");
     printf(": %s> ", PWD);
-    printf("\033[0m");
+    printf("\033[0;36m");
     fflush(stdin);
     memset(comando,'\0',maxln_Com_Amb);
     scanf(" %[^\n]s",comando);
@@ -88,11 +94,10 @@ int main(void) {
     if( strlen(comando) > 0 ){
       int paramsLen = parseCommand();
 
-      if(strcmp(comando, "quit") == 0) {
+      if(strcmp(comando, "quit") == 0 || strcmp(comando, "exit") == 0 || strcmp(comando, "logout") == 0 || strcmp(comando, "!q") == 0) {
         ready = 0;
       } else {
-      if (strcmp(args[paramsLen - 1], "&") == 0) executeCommand(1); else executeCommand(0);
-        
+        if (strcmp(args[paramsLen - 1], "&") == 0) executeCommand(1); else executeCommand(0);
       }
     }
 
