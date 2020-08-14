@@ -10,6 +10,10 @@ Ejecución
 -------
 Ejecutar makefile, luego  ``./shell``
 
+Pruebas
+-----
+En el repositorio está ``delay_test.c``. Archivo que ayudará probar ejecución en segundo plano. 
+
 
 Precaución
 -------------
