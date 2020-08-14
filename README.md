@@ -8,4 +8,21 @@ El objetivo de la tarea es escribir un mini-shell en Linux, con la posibilidad d
 
 Ejecución
 -------
+Ejecutar makefile, luego  ``./shell``
 
+
+Precaución
+-------------
+Dependiendo el programa a ejecutar en segundo plano, la consola hace salto de linea. Se corrige ingresando **``!x``**.
+
+
+Supuestos
+---------
+* No reconoce ``chdir`` (cd).
+
+Atajos
+----------
+* **!q, quit, exit, logout**: salir de la consola
+* **!c, credits**: Créditos
+* **!h, help**: muestra atajos en la consola
+* **!x**: genera una nueva linea de ejecución
