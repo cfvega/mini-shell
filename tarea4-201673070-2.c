@@ -3,8 +3,7 @@
 int main(void) {
   int ready=1;
 
-  strcpy(PATH,getenv("PATH"));
-  getcwd(PWD,maxln_Com_Amb);
+  getcwd(PWD,max_lines);
 
   uid_t uid = geteuid();
   struct passwd *pw = getpwuid(uid);
@@ -19,19 +18,22 @@ int main(void) {
     printf(": %s> ", PWD);
     printf("\033[0;36m");
     fflush(stdin);
-    memset(comando,'\0',maxln_Com_Amb);
-    scanf(" %[^\n]s",comando);
+    memset(command,'\0',max_lines);
+    scanf(" %[^\n]s",command);
 
-    if( strlen(comando) > 0 ){
+    if( strlen(command) > 0 ){
       int paramsLen = parseCommand();
+      // printf("%s",command);
 
-      if(strcmp(comando, "quit") == 0 || strcmp(comando, "exit") == 0 || strcmp(comando, "logout") == 0 || strcmp(comando, "!q") == 0) {
+      if(strcmp(command, "quit") == 0 || strcmp(command, "exit") == 0 || strcmp(command, "logout") == 0 || strcmp(command, "!q") == 0) {
         ready = 0;
-      } else if( strcmp(comando, "help") == 0 || strcmp(comando, "!h") == 0 ) {
+      } else if( strcmp(command, "help") == 0 || strcmp(command, "!h") == 0 ) {
         showHelp();
-      } else if( strcmp(comando, "credits") == 0 || strcmp(comando, "!c") == 0 ) {
+      } else if( strcmp(command, "credits") == 0 || strcmp(command, "!c") == 0 ) {
         showCredits();
-      } else{
+      } else if(strcmp(command, "!x") == 0){
+        continue;
+      }else{
         if (strcmp(args[paramsLen - 1], "&") == 0) executeCommand(1); else executeCommand(0);
       }
     }

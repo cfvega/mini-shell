@@ -3,20 +3,20 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-
 #include <unistd.h>
 #include <string.h>
 
 #include <pwd.h>
-#define maxln_Com_Amb 105
-#define max_args 10
+#include <sys/wait.h>
 
-char comando[maxln_Com_Amb];
+#define max_lines 150
+#define max_args 15
+
+char command[max_lines];
 char *args[max_args];
 
-char PWD[maxln_Com_Amb];
-char PATH[maxln_Com_Amb];
-char USER[maxln_Com_Amb];
+char PWD[max_lines];
+char USER[max_lines];
 
 int parseCommand();
 int checkPath();

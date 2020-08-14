@@ -10,4 +10,4 @@ functions.o: functions.c
 	gcc -Wall -c functions.c
 
 clean:
-	rm *.o *~ shell
+	rm *.o shell
