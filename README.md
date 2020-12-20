@@ -30,3 +30,7 @@ Atajos
 * **!c, credits**: Créditos
 * **!h, help**: muestra atajos en la consola
 * **!x**: genera una nueva linea de ejecución
+
+
+
+[logo]: https://github.com/adam-p/markdown-here/raw/master/src/common/images/icon48.png "Logo Title Text 2"
